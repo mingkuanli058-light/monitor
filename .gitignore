@@ -1,8 +1,8 @@
 # ---- .NET 编译产物 ----
 bin/
 obj/
-dist/
-publish/
+/agent/dist/
+**/publish/
 *.exe
 *.dll
 *.pdb
