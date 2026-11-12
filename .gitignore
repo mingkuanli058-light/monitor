@@ -1,0 +1,40 @@
+# ---- .NET 编译产物 ----
+bin/
+obj/
+dist/
+publish/
+*.exe
+*.dll
+*.pdb
+*.cache
+
+# ---- Visual Studio / Rider ----
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userprefs
+*.DotSettings.user
+
+# ---- 运行时数据库（含演示与真实终端数据，不入库）----
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+
+# ---- 日志与临时文件 ----
+*.log
+logs/
+*.tmp
+*.bak
+Thumbs.db
+desktop.ini
+
+# ---- 敏感信息模板（如需使用请本地创建，不要提交）----
+appsettings.local.json
+*.secret.json
+.env

@@ -1,0 +1,52 @@
+@page
+@model MonitorServer.Pages.ReportsModel
+@{
+    ViewData["Title"] = "统计报表";
+}
+<h1>统计报表</h1>
+
+<form method="get" class="toolbar">
+    <select name="period" onchange="this.form.submit()">
+        <option value="day" selected="@(Model.Period == "day")">按日</option>
+        <option value="week" selected="@(Model.Period == "week")">按周</option>
+        <option value="month" selected="@(Model.Period == "month")">按月</option>
+    </select>
+    <span style="color:#6b7280;font-size:13px">统计区间：@Model.From.ToString("yyyy-MM-dd") ~ @Model.To.ToString("yyyy-MM-dd")</span>
+    <a class="btn" href="?handler=Export&period=@Model.Period">导出 Excel</a>
+</form>
+
+<div class="card">
+    <h2>各电脑汇总</h2>
+    <table>
+        <thead>
+            <tr><th>电脑</th><th>使用人</th><th>天数</th><th>开机总时长</th><th>干活时长</th><th>空闲时长</th><th>干活占比</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model.Rows)
+            {
+                <tr>
+                    <td>@row.Code</td>
+                    <td>@row.UserName</td>
+                    <td>@row.Days</td>
+                    <td>@(row.OnMinutes / 60)时@(row.OnMinutes % 60)分</td>
+                    <td>@(row.ActiveMinutes / 60)时@(row.ActiveMinutes % 60)分</td>
+                    <td>@(row.IdleMinutes / 60)时@(row.IdleMinutes % 60)分</td>
+                    <td>@(row.ActiveRatio.ToString("0.0"))%</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>程序使用排行（全部电脑合计）</h2>
+    <table>
+        <thead><tr><th>程序</th><th>总时长</th></tr></thead>
+        <tbody>
+            @foreach (var (app, minutes) in Model.TopApps)
+            {
+                <tr><td>@app</td><td>@(minutes / 60)时@(minutes % 60)分</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

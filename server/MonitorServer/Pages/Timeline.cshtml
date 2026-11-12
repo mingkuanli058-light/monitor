@@ -1,0 +1,80 @@
+@page
+@model MonitorServer.Pages.TimelineModel
+@{
+    ViewData["Title"] = "电脑时间线";
+}
+<h1>电脑时间线</h1>
+
+<form method="get" class="toolbar">
+    <select name="deviceId" onchange="this.form.submit()">
+        @foreach (var d in Model.Devices)
+        {
+            <option value="@d.Id" selected="@(d.Id == Model.DeviceId)">@d.Code（@d.UserName）</option>
+        }
+    </select>
+    <input type="date" name="date" value="@Model.Date.ToString("yyyy-MM-dd")" onchange="this.form.submit()" />
+</form>
+
+@if (Model.Summary == null)
+{
+    <div class="card">当天无数据（可能是周末/节假日或尚未开机）。</div>
+}
+else
+{
+    <div class="grid-4">
+        <div class="stat-box"><div class="num">@Model.Summary.BootTime?.ToString("HH:mm")</div><div class="label">开机</div></div>
+        <div class="stat-box"><div class="num">@Model.Summary.ShutdownTime?.ToString("HH:mm")</div><div class="label">关机</div></div>
+        <div class="stat-box"><div class="num">@((Model.Summary.ActiveMinutes + Model.Summary.IdleMinutes) / 60)时@((Model.Summary.ActiveMinutes + Model.Summary.IdleMinutes) % 60)分</div><div class="label">开机总时长</div></div>
+        <div class="stat-box"><div class="num">@(Model.Summary.ActiveMinutes / 60)时@(Model.Summary.ActiveMinutes % 60)分</div><div class="label">干活时长</div></div>
+    </div>
+
+    <div class="card">
+        <h2>时间条</h2>
+        <div class="timeline-bar">
+            @foreach (var seg in Model.Segments)
+            {
+                var pct = (double)(seg.End - seg.Start).TotalMinutes / Model.TotalMinutes * 100;
+                var cls = seg.Type == MonitorServer.Models.SegmentType.Active ? "active" : (seg.IsLocked ? "locked" : "idle");
+                <div class="timeline-seg @cls" style="width:@(pct.ToString("0.###"))%"
+                     title="@seg.Start.ToString("HH:mm")-@seg.End.ToString("HH:mm") @(cls=="active"?"干活":(cls=="locked"?"空闲(锁屏)":"空闲"))"></div>
+            }
+        </div>
+        <p style="font-size:13px;color:#6b7280;margin-top:8px;">
+            <span style="color:#22c55e">■</span> 干活
+            <span style="color:#fbbf24;margin-left:12px">■</span> 空闲
+            <span style="color:#c084fc;margin-left:12px">■</span> 空闲(锁屏/睡眠)
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>分段明细</h2>
+        <table>
+            <thead><tr><th>开始</th><th>结束</th><th>时长</th><th>类型</th></tr></thead>
+            <tbody>
+                @foreach (var seg in Model.Segments)
+                {
+                    var mins = (int)(seg.End - seg.Start).TotalMinutes;
+                    <tr>
+                        <td>@seg.Start.ToString("HH:mm")</td>
+                        <td>@seg.End.ToString("HH:mm")</td>
+                        <td>@(mins)分</td>
+                        <td>@(seg.Type == MonitorServer.Models.SegmentType.Active ? "干活" : (seg.IsLocked ? "空闲（锁屏）" : "空闲"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>当日前台程序使用排行</h2>
+        <table>
+            <thead><tr><th>程序</th><th>使用时长</th></tr></thead>
+            <tbody>
+                @foreach (var a in Model.AppUsages)
+                {
+                    <tr><td>@a.AppName</td><td>@(a.DurationMinutes / 60)时@(a.DurationMinutes % 60)分</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

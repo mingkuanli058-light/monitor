@@ -1,0 +1,18 @@
+@page
+@model MonitorServer.Pages.LoginModel
+@{
+    Layout = "_LoginLayout";
+}
+<div class="login-box">
+    <h1>终端行为监控系统</h1>
+    <p class="sub">管理员登录</p>
+    <form method="post">
+        <input type="text" name="Username" placeholder="用户名" required />
+        <input type="password" name="Password" placeholder="密码" required />
+        <button type="submit">登录</button>
+        @if (!string.IsNullOrEmpty(Model.Error))
+        {
+            <div class="error">@Model.Error</div>
+        }
+    </form>
+</div>

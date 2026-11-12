@@ -1,0 +1,62 @@
+@page
+@model MonitorServer.Pages.SettingsModel
+@{
+    ViewData["Title"] = "设置";
+}
+<h1>设置</h1>
+
+@if (Request.Query["saved"] == "1")
+{
+    <div class="card" style="color:#16a34a">已保存。</div>
+}
+
+<div class="card">
+    <h2>工作时间 / 空闲判断 / 数据保留</h2>
+    <form method="post" asp-page-handler="Settings">
+        <table>
+            <tr>
+                <td>工作开始时间</td>
+                <td><input type="time" name="workStart" value="@Model.Setting.WorkStart.ToString("HH:mm")" /></td>
+            </tr>
+            <tr>
+                <td>工作结束时间</td>
+                <td><input type="time" name="workEnd" value="@Model.Setting.WorkEnd.ToString("HH:mm")" /></td>
+            </tr>
+            <tr>
+                <td>空闲判断时长（分钟）</td>
+                <td><input type="number" name="idleThresholdMinutes" value="@Model.Setting.IdleThresholdMinutes" min="1" /></td>
+            </tr>
+            <tr>
+                <td>数据保留天数</td>
+                <td><input type="number" name="dataRetentionDays" value="@Model.Setting.DataRetentionDays" min="1" /></td>
+            </tr>
+        </table>
+        <button type="submit" class="btn" style="margin-top:12px">保存</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>电脑与使用人对应关系</h2>
+    <p style="color:#6b7280;font-size:13px;margin-top:-8px">代理首次上报会按电脑主机名自动创建一行；"主机名"仅供核对，"电脑编号"可改成好记的名字（如"3号电脑"）。</p>
+    @foreach (var d in Model.Devices)
+    {
+        <form method="post" asp-page-handler="Device" style="display:contents">
+            <table style="margin-bottom:4px">
+                <tr>
+                    <td style="width:130px">
+                        <input type="hidden" name="deviceId" value="@d.Id" />
+                        <input type="text" name="code" value="@d.Code" placeholder="电脑编号" />
+                    </td>
+                    <td style="width:120px;color:#9ca3af;font-size:12px">@d.HostName</td>
+                    <td style="width:160px">
+                        <input type="text" name="userName" value="@d.UserName" placeholder="使用人" />
+                    </td>
+                    <td style="width:160px">
+                        <input type="checkbox" name="foregroundTrackingEnabled" value="true" checked="@d.ForegroundTrackingEnabled" /> 前台程序记录
+                    </td>
+                    <td><button type="submit" class="btn secondary">保存</button></td>
+                </tr>
+            </table>
+        </form>
+    }
+</div>

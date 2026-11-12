@@ -1,0 +1,41 @@
+﻿@page
+@model MonitorServer.Pages.IndexModel
+@{
+    ViewData["Title"] = "总览";
+}
+<h1>总览</h1>
+
+<div class="grid-4">
+    <div class="stat-box"><div class="num">@Model.Rows.Count</div><div class="label">终端总数</div></div>
+    <div class="stat-box"><div class="num">@Model.OnlineCount</div><div class="label">在线</div></div>
+    <div class="stat-box"><div class="num">@Model.ActiveCount</div><div class="label">正在干活</div></div>
+    <div class="stat-box"><div class="num">@Model.Rows.Count(r => r.Status == "offline")</div><div class="label">离线</div></div>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>电脑</th>
+                <th>使用人</th>
+                <th>当前状态</th>
+                <th>今日开机时长</th>
+                <th>今日干活时长</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model.Rows)
+            {
+                <tr>
+                    <td>@row.Code</td>
+                    <td>@row.UserName</td>
+                    <td><span class="status @row.Status">@row.StatusText</span></td>
+                    <td>@(row.OnMinutesToday / 60)小时@(row.OnMinutesToday % 60)分</td>
+                    <td>@(row.ActiveMinutesToday / 60)小时@(row.ActiveMinutesToday % 60)分</td>
+                    <td><a class="btn secondary" asp-page="/Timeline" asp-route-deviceId="@row.DeviceId">查看时间线</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

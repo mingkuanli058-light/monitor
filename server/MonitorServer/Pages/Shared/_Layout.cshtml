@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 终端行为监控系统</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">终端行为监控系统</div>
+        <nav class="nav">
+            <a asp-page="/Index">总览</a>
+            <a asp-page="/Timeline">电脑时间线</a>
+            <a asp-page="/Reports">统计报表</a>
+            <a asp-page="/Settings">设置</a>
+        </nav>
+        <div class="user">
+            @User.Identity?.Name
+            <form method="post" asp-page="/Logout" style="display:inline">
+                <button type="submit" class="link-btn">退出</button>
+            </form>
+        </div>
+    </header>
+    <main class="container">
+        @RenderBody()
+    </main>
+</body>
+</html>
